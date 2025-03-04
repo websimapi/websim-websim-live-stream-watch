@@ -19,7 +19,9 @@ function App() {
         setRoom(mainRoom);
 
         // Get the username
-        setUsername(mainRoom.party.client.username);
+        if (mainRoom && mainRoom.party && mainRoom.party.client) {
+            setUsername(mainRoom.party.client.username);
+        }
 
         return () => {
             if (mainRoom) {
@@ -209,6 +211,7 @@ function HomePage({ room, onViewStream }) {
 
 // Stream Card Component
 function StreamCard({ stream, onClick }) {
+    const username = stream.username || "Unknown";
     return (
         <div className="stream-card" onClick={onClick}>
             <div className="stream-thumbnail">
@@ -225,11 +228,11 @@ function StreamCard({ stream, onClick }) {
             <div className="stream-info">
                 <div className="streamer-row">
                     <img 
-                        src={`https://images.websim.ai/avatar/${stream.username}`}
-                        alt={`${stream.username}'s avatar`} 
+                        src={`https://images.websim.ai/avatar/${username}`}
+                        alt={`${username}'s avatar`} 
                         className="streamer-avatar"
                     />
-                    <span className="streamer-name">{stream.username}</span>
+                    <span className="streamer-name">{username}</span>
                 </div>
                 <div className="stream-title">{stream.title}</div>
             </div>
@@ -246,7 +249,7 @@ function StreamingPage({ stream, title, setStreamTitle, onEndStream, room }) {
         if (stream && videoRef.current) {
             videoRef.current.srcObject = stream;
         }
-    }, [stream]);
+    }, [stream, videoRef.current]);
 
     const handleStartStreaming = async () => {
         try {
@@ -342,7 +345,7 @@ function ViewStreamPage({ stream, room, onReturn }) {
     
     // Connect to the streamer's room
     useEffect(() => {
-        if (stream) {
+        if (stream && stream.username) {
             const streamerRoom = new WebsimSocket(`stream-${stream.username}`);
             setStreamRoom(streamerRoom);
             
