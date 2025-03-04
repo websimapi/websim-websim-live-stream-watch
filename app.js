@@ -260,7 +260,9 @@ function StreamingPage({ stream, title, setStreamTitle, onEndStream, room }) {
                 };
                 
                 const captureStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-                videoRef.current.srcObject = captureStream;
+                if (videoRef.current) {
+                    videoRef.current.srcObject = captureStream;
+                }
             }
             
             await startBroadcast();
@@ -417,8 +419,8 @@ function ViewStreamPage({ stream, room, onReturn }) {
                             messages.map(message => (
                                 <div className="chat-message" key={message.id}>
                                     <img 
-                                        src={`https://images.websim.ai/avatar/${message.username}`}
-                                        alt={`${message.username}'s avatar`} 
+                                        src={`https://images.websim.ai/avatar/${message.username || room.party.client.username}`}
+                                        alt={`${message.username || "User"}'s avatar`} 
                                         className="message-avatar"
                                     />
                                     <div className="message-content">
@@ -459,4 +461,3 @@ function ViewStreamPage({ stream, room, onReturn }) {
 // Create root and render app
 const root = createRoot(document.getElementById('app'));
 root.render(<App />);
-
